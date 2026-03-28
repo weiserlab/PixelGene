@@ -16,7 +16,7 @@ import torch_directml
 from accelerate import Accelerator
 from accelerate.logging import get_logger
 from accelerate.utils import set_seed
-from diffusers import AutoencoderKL, PNDMScheduler, LCMScheduler, UniPCMultistepScheduler, DPMSolverMultistepScheduler#, StableDiffusionControlNetPipeline
+from diffusers import AutoencoderKL, PNDMScheduler, LCMScheduler, DDIMScheduler, DPMSolverMultistepScheduler, EulerAncestralDiscreteScheduler
 from diffusers.utils import check_min_version
 from diffusers.utils.import_utils import is_xformers_available
 from transformers import CLIPTextModel, CLIPTokenizer, CLIPImageProcessor
@@ -26,12 +26,21 @@ from pasd.myutils.misc import load_dreambooth_lora
 from pasd.myutils.wavelet_color_fix import wavelet_color_fix
 #from annotator.retinaface import RetinaFaceDetection
 
+import warnings
+warnings.filterwarnings("ignore")
+
 sys.path.append('PASD')
 
 # Will error if the minimal version of diffusers is not installed. Remove at your own risks.
 check_min_version("0.18.0.dev0")
 
 logger = get_logger(__name__, log_level="INFO")
+
+# ---------------------------------------------------------
+# DEBUG TRACKER: Print progress and dump intermediate images
+# ---------------------------------------------------------
+import os
+from PIL import Image
 
 def load_pasd_pipeline(args, accelerator, enable_xformers_memory_efficient_attention):
     if args.use_pasd_light:
@@ -50,7 +59,7 @@ def load_pasd_pipeline(args, accelerator, enable_xformers_memory_efficient_atten
         scheduler = DPMSolverMultistepScheduler.from_pretrained("runs/pasd_light_color", subfolder="scheduler")
     else:
         scheduler = DPMSolverMultistepScheduler.from_pretrained(args.pretrained_model_path, subfolder="scheduler")
-        
+
     text_encoder = CLIPTextModel.from_pretrained(args.pretrained_model_path, subfolder="text_encoder")
     tokenizer = CLIPTokenizer.from_pretrained(args.pretrained_model_path, subfolder="tokenizer")
     vae = AutoencoderKL.from_pretrained(args.pretrained_model_path, subfolder="vae")
@@ -93,6 +102,9 @@ def load_pasd_pipeline(args, accelerator, enable_xformers_memory_efficient_atten
     unet.to(dml_device, dtype=weight_dtype)
     controlnet.to(dml_device, dtype=weight_dtype)
 
+    # 1. FORCE VAE TO FP32 FOR STABILITY
+    #vae.to(dml_device, dtype=torch.float32)
+
     # if enable_xformers_memory_efficient_attention:
     #     if is_xformers_available():
     #         unet.enable_xformers_memory_efficient_attention()
@@ -107,9 +119,48 @@ def load_pasd_pipeline(args, accelerator, enable_xformers_memory_efficient_atten
         unet=unet, controlnet=controlnet, scheduler=scheduler, safety_checker=None, requires_safety_checker=False,
     )
 
-    validation_pipeline.enable_attention_slicing()
-    #validation_pipeline.enable_vae_tiling()
-    #validation_pipeline._init_tiled_vae(encoder_tile_size=args.encoder_tiled_size, decoder_tile_size=args.decoder_tiled_size)
+    validation_pipeline.enable_attention_slicing(1)
+    validation_pipeline.enable_vae_slicing()
+    # validation_pipeline.enable_vae_tiling()
+    # validation_pipeline._init_tiled_vae(encoder_tile_size=args.encoder_tiled_size, decoder_tile_size=args.decoder_tiled_size)
+
+    # ---------------------------------------------------------
+    # 2. THE DECODE-ONLY VAE BRIDGE
+    # ---------------------------------------------------------
+    import types
+    
+    original_vae_decode = validation_pipeline.vae.decode
+    
+    def safe_vae_decode(self, z, *args, **kwargs):
+        print("\n[DEBUG] ---> DECODE INTERCEPTED! Flipping VAE to FP32 for safe image generation...")
+        
+        # 1. Flip the VAE to 32-bit to prevent the whiteout bug
+        self.to(dtype=torch.float32)
+        
+        # 2. Convert the incoming UNet math into 32-bit
+        z_32 = z.to(torch.float32)
+        
+        # 3. Safely decode the image
+        output = original_vae_decode(z_32, *args, **kwargs)
+        
+        # 4. Flip the VAE back to 16-bit just to be perfectly clean
+        self.to(dtype=torch.float16)
+        
+        return output
+        
+    # ONLY attach the patch to the decoder! Leave the encoder alone.
+    validation_pipeline.vae.decode = types.MethodType(safe_vae_decode, validation_pipeline.vae)
+    # ---------------------------------------------------------
+
+    # ---------------------------------------------------------
+    # THE MISSING DIRECTML DEADLOCK FIX
+    # ---------------------------------------------------------
+    from diffusers.models.attention_processor import AttnProcessor
+    
+    # Force vanilla math to disable the buggy NVIDIA SDPA optimization
+    validation_pipeline.unet.set_attn_processor(AttnProcessor())
+    validation_pipeline.controlnet.set_attn_processor(AttnProcessor())
+    # ---------------------------------------------------------
 
     if args.use_lcm_lora:
         # load and fuse lcm lora
@@ -174,7 +225,7 @@ def get_validation_prompt(args, image, model, preprocess, category, device=torch
     elif args.high_level_info == "caption":
         if args.use_blip:
             image = preprocess["eval"](image).unsqueeze(0).to(device)
-            caption = model.generate({"image": image}, num_captions=1)[0]
+            caption = model.generate({"image": image},use_nucleus_sampling=True, num_captions=1)[0]
             caption = caption.replace("blurry", "clear").replace("noisy", "clean") #
             validation_prompt = caption if args.prompt=="" else f"{caption}, {args.prompt}"
         else:
@@ -217,7 +268,46 @@ def main(args, enable_xformers_memory_efficient_attention=False,):
     ] if args.control_type=="realisr" else [
         transforms.Resize(args.process_size, max_size=args.process_size*2, interpolation=transforms.InterpolationMode.BILINEAR),
     ])
+
+    # ---------------------------------------------------------          
+    def debug_tracker(step: int, timestep: int, latents: torch.FloatTensor):
+        print(f"\n[DEBUG] >> Successfully finished Step {step} (Timestep: {timestep})")
+        
+        # --- OPTIONAL: Dump the intermediate image ---
+        # WARNING: Decoding the image mid-generation uses extra VRAM. 
+        # If it causes an Out of Memory error, comment these 4 lines out.
+        try:
+            with torch.no_grad():
+                # Decode the raw math (latents) into actual pixels
+                image_array = pipeline.decode_latents(latents)
+                image_pil = pipeline.numpy_to_pil(image_array)[0]
                 
+                # Create a debug folder if it doesn't exist
+                os.makedirs("debug_steps", exist_ok=True)
+                image_pil.save(f"debug_steps/step_{step}.png")
+                print(f"[DEBUG] >> Saved intermediate image: debug_steps/step_{step}.png")
+                # --- NEW: Force memory cleanup to prevent Step 6 crashes ---
+                del image_array
+                del image_pil
+                import gc
+                gc.collect()
+
+                # Calculate stats
+                mean = latents.mean().item()
+                std = latents.std().item()
+                max_val = latents.max().item()
+                min_val = latents.min().item()
+                has_nan = torch.isnan(latents).any().item()
+                
+                print(f"Step: {step} | Timestep: {timestep}")
+                print(f"  Range: [{min_val:.4f}, {max_val:.4f}] | Mean: {mean:.4f} | Std: {std:.4f}")
+                
+                if has_nan:
+                    print("  🚨 ALERT: NaNs detected at this step!")
+        except Exception as e:
+            print(f"[DEBUG] >> Could not save image for step {step}: {e}")
+    # ---------------------------------------------------------
+
     if accelerator.is_main_process:
         generator = torch.Generator(device="cpu")
         if args.seed is not None:
@@ -240,7 +330,6 @@ def main(args, enable_xformers_memory_efficient_attention=False,):
                 orig_img = validation_image.copy()
                 validation_prompt = get_validation_prompt(args, validation_image, model, preprocess, category, torch_directml.device())
                 validation_prompt = validation_prompt.replace("black and white", "color").replace("black - and - white", "vibrant color")
-                print("HERE")
                 validation_prompt += args.added_prompt
                 negative_prompt = "b&w, color bleeding, vintage, faded, monochrome"
             else:
@@ -269,15 +358,24 @@ def main(args, enable_xformers_memory_efficient_attention=False,):
             try:
                 image = pipeline(
                         args, validation_prompt, validation_image, num_inference_steps=args.num_inference_steps, generator=generator, #height=height, width=width,
-                        guidance_scale=args.guidance_scale, negative_prompt=negative_prompt, conditioning_scale=args.conditioning_scale,
+                        guidance_scale=args.guidance_scale, negative_prompt=negative_prompt, conditioning_scale=args.conditioning_scale, 
+                        callback=debug_tracker, 
+                        callback_steps=5
                     ).images[0]
             except Exception as e:
                 print(e)
                 continue
+
+            # --- NEW INTERCEPT: DUMP RAW AI OUTPUT ---
+            os.makedirs("debug_steps", exist_ok=True)
+            image.save("debug_steps/raw_step_50_before_post.png")
+            print("[DEBUG] >> Saved raw AI output to debug_steps/raw_step_50_before_post.png")
+            # -----------------------------------------
             
             print("done pipeline")
             if args.control_type=="realisr": 
-                if True: #args.conditioning_scale < 1.0:
+                #if True: #args.conditioning_scale < 1.0:
+                if args.conditioning_scale < 1.0:
                     image = wavelet_color_fix(image, validation_image)
 
                 if resize_flag: 
@@ -293,9 +391,11 @@ def main(args, enable_xformers_memory_efficient_attention=False,):
                 hires = np.copy(orig_yuv)
                 hires[:, :, 1:3] = color_yuv[:, :, 1:3]
                 np_image = cv2.cvtColor(hires, cv2.COLOR_YUV2BGR)
-                cv2.imwrite(f'{args.output_dir}/{name}.png', np_image)
+                cv2.imwrite(f'{args.output_dir}/{name}_{args.output_tag}.png', np_image)
+                temp=f'image saved at {args.output_dir}/{name}_{args.output_tag}.png'
+                print(temp)
             else:
-                image.save(f'{args.output_dir}/{name}.png')
+                image.save(f'{args.output_dir}/{name}_{args.output_tag}.png')
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -310,6 +410,7 @@ if __name__ == "__main__":
     parser.add_argument("--negative_prompt", type=str, default="blurry, dotted, noise, raster lines, unclear, lowres, over-smoothed", help="negative prompt")
     parser.add_argument("--image_path", type=str, default="examples/dog.png", help="test image path or folder")
     parser.add_argument("--output_dir", type=str, default="output", help="output folder")
+    parser.add_argument("--output_tag", type=str, default='', help="tag for testing")
     parser.add_argument("--mixed_precision", type=str, default="fp16", help="mixed precision mode") # no/fp16/bf16
     parser.add_argument("--guidance_scale", type=float, default=9.0, help="classifier-free guidance scale")
     parser.add_argument("--conditioning_scale", type=float, default=1.0, help="conditioning scale for controlnet")
@@ -337,4 +438,4 @@ if __name__ == "__main__":
 ### call from cmd
 ### C:\Users\WEISER\miniconda3\Scripts\activate.bat
 # conda activate pasd
-# python test_pasd.py --pasd_model_path runs/pasd_light_color/checkpoint-180000 --control_type grayscale --high_level_info caption --use_pasd_light --use_blip --image_path ./examples/test.png --process_size 512
+# python test_pasd.py --pasd_model_path runs/pasd_light_color/checkpoint-180000 --control_type grayscale --high_level_info --use_pasd_light --image_path ./examples/test.png --process_size 256 --prompt "forest, grey house" --num_inference_steps 50 --mixed_precision no --output_tag ForestGreyHouse
