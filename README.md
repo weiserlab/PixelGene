@@ -20,26 +20,25 @@ pip install -r requirements.txt
    huggingface-cli download lllyasviel/ControlNet-v1-1 control_v11f1e_sd15_tile.pth --local-dir checkpoints/controlnet 
 
    Expected Directory Structure:
-   PASD-main/
-   ├── checkpoints/
-   │   ├── stable-diffusion-v1-5/
-   │   │   ├── unet/
-   │   │   └── ... (tokenizer, vae, etc.)
-   │   └── personalized_models/
-   ├── runs/
-   │   ├── pasd/
-   │   │   └── checkpoints-100000
-   │   ├── pasd_light/
-   │   ├── pasd_light_color/
-   │   │   └── checkpoints-180000
-   │   │   └── scheduler
-   │   ├── pasd_light_rrdb/
-   │   ├── pasd_rrdb/
-   ├── pasd/           # Core model architecture
-   ├── test_pasd.py    # Main inference script
-   └── run.bat
-   └── ...
+PASD-main/
+├── checkpoints/                 # Pre-trained Model Weights (Stable Diffusion, etc.)
+│   ├── stable-diffusion-v1-5/
+│   │   ├── unet/
+│   │   └── ... (tokenizer, vae, etc.)
+│   └── personalized_models/     # Custom refined weights
+├── runs/                        # Training Artifacts & Logs
+│   ├── pasd/
+│   │   └── checkpoints-100000/
+│   ├── pasd_light_color/
+│   │   ├── checkpoints-180000/
+│   │   └── scheduler/
+│   └── ... (other training runs)
+├── pasd/                        # Core model architecture and logic
+├── test_pasd.py                 # Main inference/testing script
+├── run.bat                      # Windows execution batch file
+├── requirements.txt             # Python dependencies
+└── README.md                    # Project documentation
 
-3. Running Inference
+4. Running Inference
 Once the weights are in place, you can run the super-resolution test script: python test_pasd.py
 Outputs will be saved to the /output folder. sample running command can be found in run.bat.
