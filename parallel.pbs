@@ -1,0 +1,15 @@
+#!/bin/bash
+#PBS -N pasd
+#PBS -l walltime=02:00:00
+#PBS -l select=1:ncpus=36:mpiprocs=1:ompthreads=36:mem=250gb:ngpus=1
+
+cd $PBS_O_WORKDIR
+
+# 1. Load Conda
+module load Miniconda3/24.7.1-0
+
+# 2. Activate your environment
+source activate /scratch/e0007512/env
+
+# 3. Run your script
+python test_pasd_NVDIA.py --pasd_model_path runs/pasd_light_color/checkpoint-180000 --control_type grayscale --high_level_info --use_pasd_light --image_path ./examples/test_realisr.png --process_size 512 --prompt "forest, grey house" --num_inference_steps 50 --mixed_precision no --output_tag ForestGreyHouse_realisr_size512

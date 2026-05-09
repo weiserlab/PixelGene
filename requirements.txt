@@ -1,6 +1,10 @@
+--extra-index-url https://download.pytorch.org/whl/cu121
+torch==2.4.1
+torchvision==0.19.1
+opencv-python-headless
 diffusers==0.29.2
 accelerate
-transformers
+transformers==4.44.0
 xformers; sys_platform != 'darwin'
 ultralytics
 webdataset
@@ -8,3 +12,4 @@ open_clip_torch
 einops
 gradio<4.0.0
 pytorch_lightning
+
