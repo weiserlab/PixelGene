@@ -4,13 +4,12 @@ This project implements **[Pixel-Aware Stable Diffusion (PASD)](https://github.c
 
 🚀 Getting StartedTo get this project running on your local machine or a GPU server, follow these steps.
 
-1. InstallationFirst, clone the repository and install the necessary Python libraries:Bashgit clone git@github.com:sofialeotag/MComp_Capstone.git
+1. Clone the repository and install the necessary Python libraries: git clone git@github.com:sofialeotag/MComp_Capstone.git
 cd MComp_Capstone
 pip install -r requirements.txt (Recommended to build new environment)
 
 2. Model Weights:
    https://huggingface.co/yangtao9009/PASD/tree/main
-
 
 3. Running Inference
 Once the weights are in place, under built environment, you can run the super-resolution test script: python test_pasd_AMD.py or python test_pasd_NVDIA.py
