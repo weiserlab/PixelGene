@@ -25,6 +25,10 @@ from pasd.myutils.misc import load_dreambooth_lora
 from pasd.myutils.wavelet_color_fix import wavelet_color_fix
 #from annotator.retinaface import RetinaFaceDetection
 
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
 sys.path.append('PASD')
 
 # Will error if the minimal version of diffusers is not installed. Remove at your own risks.
@@ -173,6 +177,9 @@ def get_validation_prompt(args, image, model, preprocess, category, device='cuda
     return validation_prompt
 
 def main(args, enable_xformers_memory_efficient_attention=True,):
+    if args.disable_xformers:
+        enable_xformers_memory_efficient_attention = False
+
     accelerator = Accelerator(
         mixed_precision=args.mixed_precision,
     )
@@ -199,13 +206,54 @@ def main(args, enable_xformers_memory_efficient_attention=True,):
         transforms.Resize(args.process_size, max_size=args.process_size*2, interpolation=transforms.InterpolationMode.BILINEAR),
     ])
                 
+    # # ---------------------------------------------------------          
+    # def debug_tracker(step: int, timestep: int, latents: torch.FloatTensor):
+    #     # print(f"\n[DEBUG] >> Successfully finished Step {step} (Timestep: {timestep})")
+        
+    #     # --- OPTIONAL: Dump the intermediate image ---
+    #     # WARNING: Decoding the image mid-generation uses extra VRAM. 
+    #     # If it causes an Out of Memory error, comment these 4 lines out.
+    #     try:
+    #         with torch.no_grad():
+    #             # Decode the raw math (latents) into actual pixels
+    #             image_array = pipeline.decode_latents(latents)
+    #             image_pil = pipeline.numpy_to_pil(image_array)[0]
+                
+    #             # Create a debug folder if it doesn't exist
+    #             os.makedirs("debug_steps", exist_ok=True)
+    #             image_pil.save(f"debug_steps/step_{step}.png")
+    #             # print(f"[DEBUG] >> Saved intermediate image: debug_steps/step_{step}.png")
+    #             # --- NEW: Force memory cleanup to prevent Step 6 crashes ---
+    #             del image_array
+    #             del image_pil
+    #             import gc
+    #             gc.collect()
+
+    #             # Calculate stats
+    #             mean = latents.mean().item()
+    #             std = latents.std().item()
+    #             max_val = latents.max().item()
+    #             min_val = latents.min().item()
+    #             has_nan = torch.isnan(latents).any().item()
+                
+    #             # print(f"Step: {step} | Timestep: {timestep}")
+    #             # print(f"  Range: [{min_val:.4f}, {max_val:.4f}] | Mean: {mean:.4f} | Std: {std:.4f}")
+                
+    #             if has_nan:
+    #                 print("  🚨 ALERT: NaNs detected at this step!")
+    #     except Exception as e:
+    #         print(f"[DEBUG] >> Could not save image for step {step}: {e}")
+    # # ---------------------------------------------------------
+
     if accelerator.is_main_process:
         generator = torch.Generator(device=accelerator.device)
         if args.seed is not None:
             generator.manual_seed(args.seed)
 
         if os.path.isdir(args.image_path):
-            image_names = sorted(glob.glob(f'{args.image_path}/*.*'))
+            all_imgs = glob.glob(f'{args.image_path}/**/*.*', recursive=True)
+            exts = ('.png', '.jpg', '.jpeg', '.bmp', '.tif', '.tiff', '.webp')
+            image_names = sorted(f for f in all_imgs if f.lower().endswith(exts))
         else:
             image_names = [args.image_path]
 
@@ -244,6 +292,8 @@ def main(args, enable_xformers_memory_efficient_attention=True,):
                 image = pipeline(
                         args, validation_prompt, validation_image, num_inference_steps=args.num_inference_steps, generator=generator, #height=height, width=width,
                         guidance_scale=args.guidance_scale, negative_prompt=negative_prompt, conditioning_scale=args.conditioning_scale,
+                        # callback=debug_tracker, 
+                        # callback_steps=5
                     ).images[0]
             except Exception as e:
                 print(e)
@@ -261,14 +311,30 @@ def main(args, enable_xformers_memory_efficient_attention=True,):
                 np_image = np.asarray(image)[:,:,::-1]
                 color_np = cv2.resize(np_image, orig_img.size)
                 orig_np = np.asarray(orig_img)
+
                 color_yuv = cv2.cvtColor(color_np, cv2.COLOR_BGR2YUV)
                 orig_yuv = cv2.cvtColor(orig_np, cv2.COLOR_BGR2YUV)
                 hires = np.copy(orig_yuv)
                 hires[:, :, 1:3] = color_yuv[:, :, 1:3]
                 np_image = cv2.cvtColor(hires, cv2.COLOR_YUV2BGR)
-                cv2.imwrite(f'{args.output_dir}/{name}_{args.output_tag}.png', np_image)
-                temp=f'image saved at {args.output_dir}/{name}_{args.output_tag}.png'
-                print(temp)
+
+                if os.path.isdir(args.image_path):
+                    # BATCH: mirror input folder structure under output_dir/output_tag/
+                    rel_dir = os.path.relpath(os.path.dirname(image_name), args.image_path)
+                    out_dir = os.path.join(args.output_dir, args.output_tag, rel_dir)
+                    out_path = os.path.join(out_dir, f'{name}.png')
+                else:
+                    # SINGLE IMAGE (input is .jpg/.png): output/name_tag.png
+                    safe_tag = args.output_tag.replace('/', '_').replace('\\', '_')
+                    out_dir = args.output_dir
+                    out_path = os.path.join(out_dir, f'{name}_{safe_tag}.png')
+
+                os.makedirs(out_dir, exist_ok=True)
+
+                if cv2.imwrite(out_path, np_image):
+                    print(f'saved {out_path}')
+                else:
+                    print(f'WARNING: failed to save {out_path}')
             else:
                 image.save(f'{args.output_dir}/{name}_{args.output_tag}.png')
 
@@ -306,5 +372,6 @@ if __name__ == "__main__":
     parser.add_argument("--added_noise_level", type=int, default=900, help="additional noise level")
     parser.add_argument("--offset_noise_scale", type=float, default=0.0, help="offset noise scale, not used")
     parser.add_argument("--seed", type=int, default=None, help="seed")
+    parser.add_argument('--disable_xformers', action='store_true')
     args = parser.parse_args()
     main(args)

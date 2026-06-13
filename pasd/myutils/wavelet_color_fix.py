@@ -10,6 +10,7 @@ from torch import Tensor
 from torch.nn import functional as F
 
 from torchvision.transforms import ToTensor, ToPILImage
+import cv2
 
 def adain_color_fix(target: Image, source: Image):
     # Convert images to tensors
@@ -105,12 +106,42 @@ def wavelet_decomposition(image: Tensor, levels=5):
 
     return high_freq, low_freq
 
+def tensor_to_image(t: Tensor, normalize_residual: bool = False):
+    """Convert a BCHW or CHW tensor to a uint8 BGR image for cv2."""
+    if t.dim() == 4:
+        t = t[0]                      # take first item in batch
+    img = t.detach().float().cpu()
+
+    if normalize_residual:
+        # high-freq is a residual centered at 0 (has negatives)
+        # shift so 0 -> gray (128), scale to make detail visible
+        # img = img * 0.5 + 0.5         # assume roughly [-1, 1] -> [0, 1]
+        img = (img - img.min()) / (img.max() - img.min() + 1e-8)
+    # if your low-freq is in [-1, 1] (diffusion convention), also rescale:
+    # img = img * 0.5 + 0.5
+
+    img = img.clamp(0, 1).mul(255).byte()
+    img = img.permute(1, 2, 0).numpy()      # CHW -> HWC
+    img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+    return img
+
 def wavelet_reconstruction(content_feat:Tensor, style_feat:Tensor):
     """
     Apply wavelet decomposition, so that the content will have the same color as the style.
     """
     # calculate the wavelet decomposition of the content feature
     content_high_freq, content_low_freq = wavelet_decomposition(content_feat)
+    
+    # save all four components
+    cv2.imwrite("debug_steps/content_high.png", tensor_to_image(content_high_freq, normalize_residual=True))
+    cv2.imwrite("debug_steps/content_low.png",  tensor_to_image(content_low_freq))
+    cv2.imwrite("debug_steps/style_high.png",   tensor_to_image(style_high_freq, normalize_residual=True))
+    
+    if cv2.imwrite("debug_steps/style_low.png",    tensor_to_image(style_low_freq)):
+        print(f'saved debug_steps/style_low.png')
+    else:
+        print(f'WARNING: failed to save debug_steps/style_low.png')
+        
     del content_low_freq
     # calculate the wavelet decomposition of the style feature
     style_high_freq, style_low_freq = wavelet_decomposition(style_feat)

@@ -16,4 +16,6 @@ dvt/
 __pycache__/
 *.py[cod]
 .venv/
-venv/
+venv/"output/" 
+"output/" 
+output/
