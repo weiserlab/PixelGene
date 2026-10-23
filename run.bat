@@ -1,5 +1,6 @@
 call C:\Users\WEISER\miniconda3\Scripts\activate.bat
 call conda activate pasd
+:: use anaconda cmd
 
 set tag=mixed_vae32_conscale0.7_size320
 set scale=0.7

@@ -1,0 +1,10 @@
+# boot 2764542644
+2026-10-17 13:08:24  Board started
+2026-10-17 13:09:25  [63 s] PIR ready
+2026-10-17 13:09:32  [70 s] PIR woke the board
+2026-10-17 13:09:32  --- Event 1 start ---
+2026-10-17 13:09:36  [74 s] PIR 1  Camera 1
+2026-10-17 13:09:37  [75 s] PIR 1  Camera 0
+2026-10-17 13:09:40  [78 s] PIR 0  Camera 0
+2026-10-17 13:09:40  --- Event 1 end: 3.7 s, photos: 1 color, 2 gray
+2026-10-17 13:09:40  [78 s] Sleeping until the PIR fires...

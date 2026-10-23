@@ -1,0 +1,41 @@
+# boot 730721161
+2026-10-17 14:23:09  Board started
+2026-10-17 14:24:10  [63 s] PIR ready
+2026-10-17 14:24:12  [65 s] 3 false alarm(s), from here until 14:24:29
+2026-10-17 14:24:34  [87 s] PIR woke the board
+2026-10-17 14:24:34  --- Event 1 start ---
+2026-10-17 14:24:36  [89 s] PIR 1  Camera 1
+2026-10-17 14:24:47  [100 s] PIR 0  Camera 1
+2026-10-17 14:24:47  [100 s] PIR 1  Camera 1
+2026-10-17 14:24:49  [102 s] PIR 0  Camera 1
+2026-10-17 14:24:52  [105 s] PIR 0  Camera 0
+2026-10-17 14:24:52  --- Event 1 end: 15.2 s, photos: 2 color, 11 gr
+2026-10-17 14:24:52  [105 s] Sleeping until the PIR fires...
+2026-10-17 14:24:57  [111 s] 1 false alarm(s), from here until 14:24:57
+2026-10-17 14:25:24  [138 s] PIR woke the board
+2026-10-17 14:25:24  --- Event 2 start ---
+2026-10-17 14:25:26  [140 s] PIR 1  Camera 1
+2026-10-17 14:25:28  [142 s] PIR 0  Camera 1
+2026-10-17 14:25:29  [143 s] PIR 0  Camera 0
+2026-10-17 14:25:29  --- Event 2 end: 2.6 s, photos: 1 color, 1 gray
+2026-10-17 14:25:29  [143 s] Sleeping until the PIR fires...
+2026-10-17 14:25:47  [161 s] PIR woke the board
+2026-10-17 14:25:47  --- Event 3 start ---
+2026-10-17 14:25:49  [163 s] PIR 1  Camera 1
+2026-10-17 14:25:51  [165 s] PIR 0  Camera 1
+2026-10-17 14:25:53  [167 s] PIR 0  Camera 0
+2026-10-17 14:25:53  --- Event 3 end: 3.8 s, photos: 1 color, 2 gray
+2026-10-17 14:25:53  [167 s] Sleeping until the PIR fires...
+2026-10-17 14:26:01  [171 s] PIR woke the board
+2026-10-17 14:26:01  --- Event 4 start ---
+2026-10-17 14:26:04  [174 s] PIR 1  Camera 1
+2026-10-17 14:26:05  [175 s] PIR 0  Camera 1
+2026-10-17 14:26:06  [176 s] PIR 1  Camera 1
+2026-10-17 14:26:08  [178 s] PIR 0  Camera 1
+2026-10-17 14:26:13  [183 s] PIR 1  Camera 1
+2026-10-17 14:26:14  [184 s] PIR 0  Camera 1
+2026-10-17 14:26:19  [189 s] PIR 1  Camera 1
+2026-10-17 14:26:20  [190 s] PIR 0  Camera 1
+2026-10-17 14:26:21  [191 s] PIR 0  Camera 0
+2026-10-17 14:26:21  --- Event 4 end: 17.0 s, photos: 4 color, 11 gr
+2026-10-17 14:26:21  [191 s] Sleeping until the PIR fires...

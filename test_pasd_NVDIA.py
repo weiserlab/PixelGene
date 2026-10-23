@@ -25,6 +25,9 @@ from pasd.myutils.misc import load_dreambooth_lora
 from pasd.myutils.wavelet_color_fix import wavelet_color_fix
 #from annotator.retinaface import RetinaFaceDetection
 
+from BenchmarkPASD import GPUTimer
+import time
+
 import warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
 warnings.filterwarnings("ignore", category=DeprecationWarning)
@@ -177,6 +180,9 @@ def get_validation_prompt(args, image, model, preprocess, category, device='cuda
     return validation_prompt
 
 def main(args, enable_xformers_memory_efficient_attention=True,):
+    run_t0 = time.perf_counter()   
+    t_mark = time.perf_counter()
+
     if args.disable_xformers:
         enable_xformers_memory_efficient_attention = False
 
@@ -197,54 +203,20 @@ def main(args, enable_xformers_memory_efficient_attention=True,):
     if accelerator.is_main_process:
         accelerator.init_trackers("PASD")
 
-    pipeline = load_pasd_pipeline(args, accelerator, enable_xformers_memory_efficient_attention)
-    model, preprocess, category = load_high_level_net(args, accelerator.device)
+    print(f"\n[time] accelerator init: {time.perf_counter() - t_mark:.2f} s")
 
+    with GPUTimer() as t_load:
+        pipeline = load_pasd_pipeline(args, accelerator, enable_xformers_memory_efficient_attention)
+        model, preprocess, category = load_high_level_net(args, accelerator.device)
+    print(f"[time] model loading: {t_load.elapsed:.2f} s")
+
+    t_mark = time.perf_counter()   
     resize_preproc = transforms.Compose([
         transforms.Resize(args.process_size, interpolation=transforms.InterpolationMode.BILINEAR),
     ] if args.control_type=="realisr" else [
         transforms.Resize(args.process_size, max_size=args.process_size*2, interpolation=transforms.InterpolationMode.BILINEAR),
     ])
-                
-    # # ---------------------------------------------------------          
-    # def debug_tracker(step: int, timestep: int, latents: torch.FloatTensor):
-    #     # print(f"\n[DEBUG] >> Successfully finished Step {step} (Timestep: {timestep})")
-        
-    #     # --- OPTIONAL: Dump the intermediate image ---
-    #     # WARNING: Decoding the image mid-generation uses extra VRAM. 
-    #     # If it causes an Out of Memory error, comment these 4 lines out.
-    #     try:
-    #         with torch.no_grad():
-    #             # Decode the raw math (latents) into actual pixels
-    #             image_array = pipeline.decode_latents(latents)
-    #             image_pil = pipeline.numpy_to_pil(image_array)[0]
-                
-    #             # Create a debug folder if it doesn't exist
-    #             os.makedirs("debug_steps", exist_ok=True)
-    #             image_pil.save(f"debug_steps/step_{step}.png")
-    #             # print(f"[DEBUG] >> Saved intermediate image: debug_steps/step_{step}.png")
-    #             # --- NEW: Force memory cleanup to prevent Step 6 crashes ---
-    #             del image_array
-    #             del image_pil
-    #             import gc
-    #             gc.collect()
-
-    #             # Calculate stats
-    #             mean = latents.mean().item()
-    #             std = latents.std().item()
-    #             max_val = latents.max().item()
-    #             min_val = latents.min().item()
-    #             has_nan = torch.isnan(latents).any().item()
-                
-    #             # print(f"Step: {step} | Timestep: {timestep}")
-    #             # print(f"  Range: [{min_val:.4f}, {max_val:.4f}] | Mean: {mean:.4f} | Std: {std:.4f}")
-                
-    #             if has_nan:
-    #                 print("  🚨 ALERT: NaNs detected at this step!")
-    #     except Exception as e:
-    #         print(f"[DEBUG] >> Could not save image for step {step}: {e}")
-    # # ---------------------------------------------------------
-
+          
     if accelerator.is_main_process:
         generator = torch.Generator(device=accelerator.device)
         if args.seed is not None:
@@ -287,18 +259,27 @@ def main(args, enable_xformers_memory_efficient_attention=True,):
             validation_image = validation_image.resize((validation_image.size[0]//8*8, validation_image.size[1]//8*8))
             #width, height = validation_image.size
             resize_flag = True #
+            
+            
+            print(f"\n[time] caption+preprocessing: {time.perf_counter() - t_mark:.2f} s")
 
-            try:
-                image = pipeline(
-                        args, validation_prompt, validation_image, num_inference_steps=args.num_inference_steps, generator=generator, #height=height, width=width,
-                        guidance_scale=args.guidance_scale, negative_prompt=negative_prompt, conditioning_scale=args.conditioning_scale,
-                        # callback=debug_tracker, 
-                        # callback_steps=5
-                    ).images[0]
-            except Exception as e:
-                print(e)
-                continue
+            with GPUTimer() as t_img:
+                try:
+                    image = pipeline(
+                            args, validation_prompt, validation_image, num_inference_steps=args.num_inference_steps, generator=generator, #height=height, width=width,
+                            guidance_scale=args.guidance_scale, negative_prompt=negative_prompt, conditioning_scale=args.conditioning_scale,
+                            # callback=debug_tracker, 
+                            # callback_steps=5
+                        ).images[0]
+                except Exception as e:
+                    print(e)
+                    continue
+            print(f"[time] {os.path.basename(image_name)}: {t_img.elapsed:.2f} s "
+                f"({validation_image.size[0]}x{validation_image.size[1]}, "
+                f"{args.num_inference_steps} steps, cfg={args.guidance_scale}"
+                f"{', lcm' if args.use_lcm_lora else ''})")
 
+            t_mark = time.perf_counter()   
             if args.control_type=="realisr": 
                 if True: #args.conditioning_scale < 1.0:
                     image = wavelet_color_fix(image, validation_image)
@@ -337,6 +318,9 @@ def main(args, enable_xformers_memory_efficient_attention=True,):
                     print(f'WARNING: failed to save {out_path}')
             else:
                 image.save(f'{args.output_dir}/{name}_{args.output_tag}.png')
+            print(f"\n[time] Image Cvt: {time.perf_counter() - t_mark:.2f} s")
+            
+        print(f"\n[time] TOTAL RUN: {time.perf_counter() - run_t0:.2f} s")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

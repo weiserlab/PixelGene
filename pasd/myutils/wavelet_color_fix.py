@@ -4,6 +4,8 @@
 # --------------------------------------------------------------------------------
 '''
 
+import os
+
 import torch
 from PIL import Image
 from torch import Tensor
@@ -125,26 +127,36 @@ def tensor_to_image(t: Tensor, normalize_residual: bool = False):
     img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
     return img
 
+# Set PASD_WAVELET_DEBUG to a folder name to dump the four wavelet bands of
+# every wavelet_color_fix() call (off by default: it is a per-call side effect
+# and the files overwrite each other on a multi-image run).
+DEBUG_DIR = os.environ.get('PASD_WAVELET_DEBUG', '')
+
+
+def _dump_bands(content_high, content_low, style_high, style_low):
+    """Write the four wavelet bands to DEBUG_DIR for inspection."""
+    os.makedirs(DEBUG_DIR, exist_ok=True)
+    bands = (('content_high', content_high, True), ('content_low', content_low, False),
+             ('style_high', style_high, True), ('style_low', style_low, False))
+    for name, tensor, residual in bands:
+        path = os.path.join(DEBUG_DIR, f'{name}.png')
+        if not cv2.imwrite(path, tensor_to_image(tensor, normalize_residual=residual)):
+            print(f'WARNING: failed to save {path}')
+
+
 def wavelet_reconstruction(content_feat:Tensor, style_feat:Tensor):
     """
     Apply wavelet decomposition, so that the content will have the same color as the style.
     """
-    # calculate the wavelet decomposition of the content feature
+    # calculate the wavelet decomposition of both features first -- the debug
+    # dump below reads the style bands, so they have to exist by then
     content_high_freq, content_low_freq = wavelet_decomposition(content_feat)
-    
-    # save all four components
-    cv2.imwrite("debug_steps/content_high.png", tensor_to_image(content_high_freq, normalize_residual=True))
-    cv2.imwrite("debug_steps/content_low.png",  tensor_to_image(content_low_freq))
-    cv2.imwrite("debug_steps/style_high.png",   tensor_to_image(style_high_freq, normalize_residual=True))
-    
-    if cv2.imwrite("debug_steps/style_low.png",    tensor_to_image(style_low_freq)):
-        print(f'saved debug_steps/style_low.png')
-    else:
-        print(f'WARNING: failed to save debug_steps/style_low.png')
-        
-    del content_low_freq
-    # calculate the wavelet decomposition of the style feature
     style_high_freq, style_low_freq = wavelet_decomposition(style_feat)
-    del style_high_freq
-    # reconstruct the content feature with the style's high frequency
+
+    if DEBUG_DIR:
+        _dump_bands(content_high_freq, content_low_freq,
+                    style_high_freq, style_low_freq)
+
+    del content_low_freq, style_high_freq
+    # reconstruct the content feature with the style's low frequency
     return content_high_freq + style_low_freq

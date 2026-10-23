@@ -313,21 +313,31 @@ def build_html(rows, pred_dir, gt_dir):
             cells += f'<td data-val="{m[k]}">{m[k]}</td>'
         pred_url = path_to_file_url(r['pred_path'])
         gt_url = path_to_file_url(r['gt_path'])
+        gray_url = path_to_file_url(r['gray_path']) if r.get('gray_path') else ''
+        gray_item = ''
+        if r.get('gray_thumb'):
+            gray_item = f"""
+              <div class="pair-item">
+                <img src="{r['gray_thumb']}" class="thumb thumb-gray"
+                     data-gray="{gray_url}" data-pred="{pred_url}" data-gt="{gt_url}" data-stem="{r['stem']}"
+                     title="click to enlarge input + pred + GT" />
+                <div class="cap">input</div>
+              </div>"""
         body.append(f"""
         <tr>
           <td class="idx-cell">{i}</td>
           <td class="img-cell">
-            <div class="pair">
+            <div class="pair">{gray_item}
               <div class="pair-item">
                 <img src="{r['pred_thumb']}" class="thumb thumb-pred"
-                     data-pred="{pred_url}" data-gt="{gt_url}" data-stem="{r['stem']}"
-                     title="click to enlarge pred + GT" />
+                     data-gray="{gray_url}" data-pred="{pred_url}" data-gt="{gt_url}" data-stem="{r['stem']}"
+                     title="click to enlarge input + pred + GT" />
                 <div class="cap">pred</div>
               </div>
               <div class="pair-item">
                 <img src="{r['gt_thumb']}" class="thumb thumb-gt"
-                     data-pred="{pred_url}" data-gt="{gt_url}" data-stem="{r['stem']}"
-                     title="click to enlarge pred + GT" />
+                     data-gray="{gray_url}" data-pred="{pred_url}" data-gt="{gt_url}" data-stem="{r['stem']}"
+                     title="click to enlarge input + pred + GT" />
                 <div class="cap">GT</div>
               </div>
             </div>
@@ -399,6 +409,7 @@ def build_html(rows, pred_dir, gt_dir):
   .pair{{display:flex;gap:6px;}}
   .pair-item{{text-align:center;}}
   .thumb{{width:104px;height:78px;object-fit:cover;border-radius:4px;display:block;cursor:pointer;}}
+  .thumb-gray{{border:2px solid #9ca3af;}}
   .thumb-pred{{border:2px solid #6366f1;}}
   .thumb-gt{{border:2px solid #10b981;}}
   .thumb:hover{{opacity:.85;}}
@@ -438,10 +449,11 @@ def build_html(rows, pred_dir, gt_dir):
   .modal-title{{font-size:13px;font-weight:600;color:#111;margin-bottom:12px;padding-right:24px;word-break:break-all;}}
   .modal-pair{{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;}}
   .modal-pair figure{{margin:0;text-align:center;}}
-  .modal-pair img{{max-width:44vw;max-height:74vh;display:block;border-radius:6px;border:1px solid #e5e7eb;}}
+  .modal-pair img{{max-width:30vw;max-height:74vh;display:block;border-radius:6px;border:2px solid #e5e7eb;}}
   .modal-pair figcaption{{font-size:12px;color:#555;margin-top:6px;font-weight:600;}}
-  .modal-pair figure:first-child img{{border:2px solid #6366f1;}}
-  .modal-pair figure:last-child img{{border:2px solid #10b981;}}
+  #modal-gray{{border-color:#9ca3af !important;}}
+  #modal-pred{{border-color:#6366f1 !important;}}
+  #modal-gt{{border-color:#10b981 !important;}}
 </style></head><body>
 <div class="page">
   <div class="header">
@@ -501,6 +513,10 @@ def build_html(rows, pred_dir, gt_dir):
     <button class="modal-close" onclick="document.getElementById('modal').classList.remove('open')">\u2715</button>
     <div class="modal-title" id="modal-title"></div>
     <div class="modal-pair">
+      <figure id="modal-gray-fig">
+        <img id="modal-gray" src="" alt="grayscale input">
+        <figcaption>Input (grayscale)</figcaption>
+      </figure>
       <figure>
         <img id="modal-pred" src="" alt="prediction">
         <figcaption>Prediction</figcaption>
@@ -698,20 +714,31 @@ function clearHighlight(){{
 
 buildWeightPanel();
 
-function openPairModal(predSrc,gtSrc,stem){{
+function openPairModal(graySrc,predSrc,gtSrc,stem){{
+  const gray=document.getElementById('modal-gray');
+  const grayFig=document.getElementById('modal-gray-fig');
   const p=document.getElementById('modal-pred');
   const g=document.getElementById('modal-gt');
   p.onerror=()=>{{p.alt='could not load file:\\n'+predSrc;}};
   g.onerror=()=>{{g.alt='could not load file:\\n'+gtSrc;}};
   p.alt='prediction'; g.alt='ground truth';
   p.src=predSrc; g.src=gtSrc;
+  if(graySrc){{
+    gray.onerror=()=>{{gray.alt='could not load file:\\n'+graySrc;}};
+    gray.alt='grayscale input';
+    gray.src=graySrc;
+    grayFig.style.display='';
+  }} else {{
+    gray.removeAttribute('src');
+    grayFig.style.display='none';
+  }}
   document.getElementById('modal-title').textContent=stem;
   document.getElementById('modal').classList.add('open');
 }}
 function closeModal(e){{if(e.target.id==='modal')document.getElementById('modal').classList.remove('open');}}
 document.addEventListener('keydown',e=>{{if(e.key==='Escape')document.getElementById('modal').classList.remove('open');}});
 document.querySelectorAll('.thumb').forEach(img=>img.addEventListener('click',()=>{{
-  openPairModal(img.dataset.pred, img.dataset.gt, img.dataset.stem);
+  openPairModal(img.dataset.gray, img.dataset.pred, img.dataset.gt, img.dataset.stem);
 }}));
 </script>
 </body></html>"""
@@ -723,6 +750,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--pred_dir', required=True, help='colorized output root, e.g. output/colorisation_size512')
     ap.add_argument('--gt_dir', required=True, help='ground-truth color root, e.g. datasets/test_color')
+    ap.add_argument('--gray_dir', default=None, help='optional grayscale input root (same structure) to show input thumbnails')
     ap.add_argument('--out_html', default='comparison_report.html')
     ap.add_argument('--thumb_w', type=int, default=120, help='thumbnail width in px')
     ap.add_argument('--log', default=None, help='optional run log (e.g. pasd.o1150650) to extract per-image captions')
@@ -730,11 +758,15 @@ def main():
 
     preds = list_images(args.pred_dir)
     gts = list_images(args.gt_dir)
+    grays = list_images(args.gray_dir) if args.gray_dir else {}
     common = sorted(set(preds) & set(gts))
     only_pred = sorted(set(preds) - set(gts))
     only_gt = sorted(set(gts) - set(preds))
 
     print(f'predictions: {len(preds)} | ground truth: {len(gts)} | matched pairs: {len(common)}')
+    if args.gray_dir:
+        matched_gray = sum(1 for s in common if s in grays)
+        print(f'grayscale inputs: {len(grays)} | matched to pairs: {matched_gray}')
     if only_pred:
         print(f'  {len(only_pred)} predictions with NO matching GT (first few): {only_pred[:5]}')
     if only_gt:
@@ -755,7 +787,7 @@ def main():
         except Exception as e:
             print(f'  SKIP {stem}: {e}')
             continue
-        rows.append({
+        row = {
             'stem': stem,
             'folder': os.path.dirname(stem) or '(root)',
             'metrics': metrics,
@@ -764,7 +796,17 @@ def main():
             'gt_thumb': thumb_b64(gt, args.thumb_w),
             'pred_path': os.path.abspath(preds[stem]),
             'gt_path': os.path.abspath(gts[stem]),
-        })
+            'gray_thumb': '',
+            'gray_path': '',
+        }
+        if stem in grays:
+            try:
+                gray = read_bgr(grays[stem])
+                row['gray_thumb'] = thumb_b64(gray, args.thumb_w)
+                row['gray_path'] = os.path.abspath(grays[stem])
+            except Exception as e:
+                print(f'  gray SKIP {stem}: {e}')
+        rows.append(row)
 
     if not rows:
         print('No comparable pairs found. Check --pred_dir / --gt_dir and folder structure.')

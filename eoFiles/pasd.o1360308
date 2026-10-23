@@ -1,0 +1,36 @@
+[note] --control_type grayscale is ignored: this script runs grayscale colorization and then realisr on every frame
+[input] color keyframe : Strawberry19.jpg
+[input] grey frames    : Strawberry19_1.jpg, Strawberry19_2.jpg, Strawberry19_3.jpg, Strawberry19_4.jpg, Strawberry19_5.jpg
+[output] output/timestamp/Strawberry19_size_sequence  (all files; 6 of them *_final.png)
+[time] caption model: 316.66 s
+[time] colorization model load: 42.53 s
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 28.181s, max VRAM alloc 7553.438 MB
+[colorize] Strawberry19_1: 51.67 s | luma residual 2.75, mean conf 1.00 | "a close up of a strawberry on a white background"
+           saved output/timestamp/Strawberry19_size_sequence/Strawberry19_1_color.png
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 10.292s, max VRAM alloc 7553.438 MB
+[colorize] Strawberry19_2: 10.44 s | luma residual 3.44, mean conf 1.00 | "a close up of a strawberry on a white background"
+           saved output/timestamp/Strawberry19_size_sequence/Strawberry19_2_color.png
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 10.298s, max VRAM alloc 7553.438 MB
+[colorize] Strawberry19_3: 10.46 s | luma residual 3.78, mean conf 1.00 | "a close up of a strawberry on a white background"
+           saved output/timestamp/Strawberry19_size_sequence/Strawberry19_3_color.png
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 10.263s, max VRAM alloc 7553.438 MB
+[colorize] Strawberry19_4: 10.41 s | luma residual 3.30, mean conf 1.00 | "a close up of a strawberry on a white background"
+           saved output/timestamp/Strawberry19_size_sequence/Strawberry19_4_color.png
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 10.326s, max VRAM alloc 7553.438 MB
+[colorize] Strawberry19_5: 10.48 s | luma residual 2.82, mean conf 1.00 | "a single strawberry with water droplets on it"
+           saved output/timestamp/Strawberry19_size_sequence/Strawberry19_5_color.png
+[stage] reusing the loaded pipeline for realisr (scheduler swapped)
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 10.291s, max VRAM alloc 7553.438 MB
+DONE  Strawberry19_size_sequence rc=1 at 2026-09-11 00:59:03

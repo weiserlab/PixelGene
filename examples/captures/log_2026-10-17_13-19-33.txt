@@ -1,0 +1,54 @@
+# boot 1892828153
+2026-10-17 13:19:33  Board started
+2026-10-17 13:20:33  [62 s] PIR ready
+2026-10-17 13:21:01  [88 s] 3 false alarm(s), from here until 13:21:15
+2026-10-17 13:21:20  [107 s] PIR woke the board
+2026-10-17 13:21:20  --- Event 1 start ---
+2026-10-17 13:21:22  [109 s] PIR 1  Camera 1
+2026-10-17 13:21:27  [114 s] PIR 0  Camera 1
+2026-10-17 13:21:28  [115 s] PIR 0  Camera 0
+2026-10-17 13:21:28  --- Event 1 end: 5.8 s, photos: 1 color, 4 gray
+2026-10-17 13:21:28  [115 s] Sleeping until the PIR fires...
+2026-10-17 13:21:31  [120 s] 3 false alarm(s), from here until 13:21:43
+2026-10-17 13:21:50  [139 s] PIR woke the board
+2026-10-17 13:21:50  --- Event 2 start ---
+2026-10-17 13:21:53  [142 s] PIR 1  Camera 1
+2026-10-17 13:21:57  [146 s] PIR 0  Camera 1
+2026-10-17 13:22:01  [150 s] PIR 1  Camera 1
+2026-10-17 13:22:04  [153 s] PIR 1  Camera 0
+2026-10-17 13:22:04  [153 s] PIR 1  Camera 1
+2026-10-17 13:22:05  [154 s] PIR 0  Camera 1
+2026-10-17 13:22:05  [154 s] PIR 0  Camera 0
+2026-10-17 13:22:05  --- Event 2 end: 12.1 s, photos: 3 color, 7 gra
+2026-10-17 13:22:05  [154 s] Sleeping until the PIR fires...
+2026-10-17 13:22:10  [160 s] 6 false alarm(s), from here until 13:23:43
+2026-10-17 13:23:50  [260 s] PIR woke the board
+2026-10-17 13:23:50  --- Event 3 start ---
+2026-10-17 13:23:56  [266 s] PIR 1  Camera 1
+2026-10-17 13:24:01  [271 s] PIR 0  Camera 1
+2026-10-17 13:24:02  [272 s] PIR 0  Camera 0
+2026-10-17 13:24:02  --- Event 3 end: 5.5 s, photos: 1 color, 4 gray
+2026-10-17 13:24:02  [272 s] Sleeping until the PIR fires...
+2026-10-17 13:24:08  [278 s] 2 false alarm(s), from here until 13:24:14
+2026-10-17 13:24:17  [287 s] PIR woke the board
+2026-10-17 13:24:17  --- Event 4 start ---
+2026-10-17 13:24:20  [290 s] PIR 1  Camera 1
+2026-10-17 13:24:22  [292 s] PIR 0  Camera 0
+2026-10-17 13:24:22  --- Event 4 end: 2.0 s, photos: 1 color, 1 gray
+2026-10-17 13:24:22  [292 s] Sleeping until the PIR fires...
+2026-10-17 13:24:27  [298 s] 3 false alarm(s), from here until 13:24:41
+2026-10-17 13:24:47  [318 s] PIR woke the board
+2026-10-17 13:24:47  --- Event 5 start ---
+2026-10-17 13:24:49  [320 s] PIR 1  Camera 1
+2026-10-17 13:24:50  [321 s] PIR 0  Camera 1
+2026-10-17 13:24:51  [322 s] PIR 0  Camera 0
+2026-10-17 13:24:51  --- Event 5 end: 2.2 s, photos: 1 color, 1 gray
+2026-10-17 13:24:51  [322 s] Sleeping until the PIR fires...
+2026-10-17 13:24:57  [326 s] 1 false alarm(s), from here until 13:24:57
+2026-10-17 13:25:03  [332 s] PIR woke the board
+2026-10-17 13:25:03  --- Event 6 start ---
+2026-10-17 13:25:06  [335 s] PIR 1  Camera 1
+2026-10-17 13:25:07  [336 s] PIR 0  Camera 1
+2026-10-17 13:25:09  [338 s] PIR 0  Camera 0
+2026-10-17 13:25:09  --- Event 6 end: 3.0 s, photos: 1 color, 1 gray
+2026-10-17 13:25:09  [338 s] Sleeping until the PIR fires...

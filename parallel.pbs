@@ -1,18 +1,49 @@
 #!/bin/bash
 #PBS -N pasd
-#PBS -l walltime=02:00:00
+#PBS -l walltime=15:00:00
 #PBS -l select=1:ncpus=36:mpiprocs=1:ompthreads=36:mem=250gb:ngpus=1
 
 cd $PBS_O_WORKDIR
 
-# 1. Load Conda
 module load Miniconda3/24.7.1-0
 
-# 2. Activate your environment
 source activate /scratch/e0007512/env
 
-# 3. Run your script
-python test_pasd_NVDIA.py --pasd_model_path runs/pasd_light_color/checkpoint-180000 --control_type grayscale --high_level_info caption --use_pasd_light --image_path ./datasets/test_black --output_dir output/blip --process_size 512 --num_inference_steps 50 --mixed_precision no --use_blip --output_tag colorisation_size512_blip
+CAP=./examples/captures
+EVENTS=(
+  "2026-10-17_14-39-35_event5"
+  "2026-10-17_14-41-52_event6"
+  "2026-10-17_14-46-21_event7"
+)
+
+for EV in "${EVENTS[@]}"; do
+    DIR="$CAP/$EV"
+    if [ ! -d "$DIR" ]; then
+        echo "MISSING $DIR (cwd $(pwd))"
+        continue
+    fi
+    TAG="${EV}_size512_chromaConfidence_opticalflow_swapconfidence_CaptionColored"
+    python test_pasd_sequence.py \
+    --pasd_model_path runs/pasd_light_color/checkpoint-180000 \
+    --control_type grayscale \
+    --high_level_info caption \
+    --use_pasd_light \
+    --image_path "$DIR" \
+    --output_dir output/captures \
+    --process_size 512 \
+    --num_inference_steps 50 \
+    --mixed_precision no \
+    --use_blip \
+    --chroma_prop 1 \
+    --chroma_by_confidence 1 \
+    --realisr_keep_chroma 1 \
+    --output_tag "$TAG" \
+    --save_debug \
+    --color_prompt "colored"
+    echo "DONE  $TAG rc=$? at $(date '+%F %T')"
+done
+#python test_pasd_NVDIA.py --pasd_model_path runs/pasd_light_color/checkpoint-180000 --control_type grayscale --high_level_info caption --use_pasd_light --image_path ./datasets/test_black/Strawberry19.jpg --output_dir output/timestamp --process_size 4096 --num_inference_steps 50 --mixed_precision no --use_blip --output_tag colorisation_size512_blip_timestamp_4096
+
 # python test_pasd_NVDIA.py --pasd_model_path runs/pasd/checkpoint-100000 --control_type grayscale --high_level_info caption --image_path ./datasets/test_black --output_dir output/blip --process_size 512 --num_inference_steps 50 --mixed_precision no --use_blip --output_tag colorisation_size512_blip
 # python test_pasd_NVDIA.py --pasd_model_path runs/pasd_light_color/checkpoint-180000 --control_type grayscale --high_level_info caption --use_pasd_light --image_path ./datasets/test_black/Strawberry/Strawberry11.jpg --process_size 1024 --num_inference_steps 50 --mixed_precision no --output_tag colorisation_step50_1024 --disable_xformers
 # python test_pasd_NVDIA.py --pasd_model_path runs/pasd_light_color/checkpoint-180000 --control_type grayscale --high_level_info --prompt "two red strawberries with green leaves in white background, red glossy reflection" --use_pasd_light --image_path ./datasets/test_black/Strawberry/Strawberry11.jpg --process_size 512 --num_inference_steps 50 --mixed_precision no --output_tag colorisation_512_step50_tworedstrbrryglossy
