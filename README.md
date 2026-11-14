@@ -19,8 +19,8 @@ This project builds on **[Pixel-Aware Stable Diffusion (PASD)](https://github.co
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/sofialeotag/MComp_Capstone.git
-cd MComp_Capstone
+git clone https://github.com/weiserlab/PixelGene.git
+cd PixelGene
 ```
 
 ### 2. Create the environment
