@@ -1,0 +1,311 @@
+[note] --control_type grayscale is ignored: this script runs grayscale colorization and then realisr on every frame
+[20:51:13 +    0.1s] === run start 2026-10-19 20:51:13 ===
+[20:51:13 +    0.1s] device cuda, mixed precision no, process size 512, seed None
+[20:51:13 +    0.1s] colorization ckpt: runs/pasd_light_color/checkpoint-180000
+[20:51:13 +    0.1s] realisr ckpt     : runs/pasd_light_color/checkpoint-180000
+[20:51:13 +    0.1s] TORCH_HOME=unset -> ~/.cache/torch  HF_HOME=unset -> ~/.cache/huggingface
+[20:51:13 +    0.3s] keyframe   : 00001_color_14-39-35.jpg
+[20:51:13 +    0.3s] grey frames: 00002_gray_14-39-36.jpg
+[20:51:13 +    0.3s] output dir : output/captures/2026-10-17_14-39-35_event5_size512_chromaConfidence_lockRealisrChroma  (2 *_final.png expected)
+[20:51:13 +    0.3s] plan       : 1 colorize + 2 realisr = 3 diffusion runs
+[20:51:13 +    0.3s] loading caption model (blip) ...
+[20:52:04 +   50.8s] caption model loaded in 50.39 s
+
+[20:52:04 +   50.8s] === STAGE 1/2: colorization (1 frames) ===
+[20:52:04 +   50.8s] loading colorization pipeline ...
+[20:52:26 +   73.1s] colorization pipeline loaded in 22.22 s
+[20:52:26 +   73.1s] --- colorize 1/1: 00002_gray_14-39-36.jpg ---
+[20:52:26 +   73.1s]     chroma propagation on 640x480 grey frame
+[20:52:26 +   73.2s]     chroma done: luma residual 6.38, mean confidence 0.920
+[20:52:33 +   79.8s]     caption: "a person is using a hair dryer on a table"
+[20:52:33 +   79.8s]     colorizing at 680x512, 50 steps, cond scale 0.7
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[20:52:37 +   83.9s]       [colorize 1/1] colorize step   1/50    4.2s elapsed, ~204.2s remaining
+[20:52:41 +   87.5s]       [colorize 1/1] colorize step  11/50    7.7s elapsed, ~ 27.4s remaining
+[20:52:44 +   90.6s]       [colorize 1/1] colorize step  21/50   10.8s elapsed, ~ 14.9s remaining
+[20:52:47 +   93.7s]       [colorize 1/1] colorize step  31/50   13.9s elapsed, ~  8.5s remaining
+[20:52:50 +   96.7s]       [colorize 1/1] colorize step  41/50   17.0s elapsed, ~  3.7s remaining
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 20.064s, max VRAM alloc 7909.099 MB
+[20:52:53 +   99.9s]     chroma propagated, confidence-weighted (mean w 0.92, 7.7% of pixels mostly model) (mean |model-propagated| = 6.5)
+[20:52:53 +   99.9s]     colorize 1/1 done in 26.80 s -> 00002_gray_14-39-36_color.png
+
+[20:52:53 +   99.9s] === STAGE 2/2: realisr (2 frames) ===
+[20:52:53 +   99.9s] reusing the loaded pipeline (same checkpoint, scheduler swapped)
+[20:52:53 +   99.9s] --- realisr 1/2: 00001_color_14-39-35_key ---
+[20:52:53 +  100.0s]     caption: "a person holding a cell phone up to a wallclean, high-resolution, 8k"
+[20:52:53 +  100.1s]     realisr at 680x512 (from 640x480, upscale 1), 50 steps, cond scale 1.0
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[20:52:54 +  100.6s]       [realisr 1/2] realisr step   1/50    0.5s elapsed, ~ 25.2s remaining
+[20:52:57 +  103.7s]       [realisr 1/2] realisr step  11/50    3.6s elapsed, ~ 12.8s remaining
+[20:53:00 +  106.7s]       [realisr 1/2] realisr step  21/50    6.7s elapsed, ~  9.2s remaining
+[20:53:03 +  109.8s]       [realisr 1/2] realisr step  31/50    9.8s elapsed, ~  6.0s remaining
+[20:53:06 +  112.9s]       [realisr 1/2] realisr step  41/50   12.9s elapsed, ~  2.8s remaining
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 15.928s, max VRAM alloc 7909.099 MB
+[20:53:09 +  116.0s]     wavelet color fix + resize back
+[20:53:10 +  116.6s]     chroma locked to the colorized input (realisr had moved it by 3.6 on average)
+[20:53:10 +  116.6s]     realisr 1/2 done in 16.62 s -> 00001_color_14-39-35_key_final.png
+[20:53:10 +  116.6s] --- realisr 2/2: 00002_gray_14-39-36 ---
+[20:53:10 +  116.8s]     caption: "a person is using a blow dryer to dry clothesclean, high-resolution, 8k"
+[20:53:10 +  116.8s]     realisr at 680x512 (from 640x480, upscale 1), 50 steps, cond scale 1.0
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[20:53:10 +  117.3s]       [realisr 2/2] realisr step   1/50    0.5s elapsed, ~ 25.6s remaining
+[20:53:13 +  120.4s]       [realisr 2/2] realisr step  11/50    3.6s elapsed, ~ 12.8s remaining
+[20:53:17 +  123.5s]       [realisr 2/2] realisr step  21/50    6.7s elapsed, ~  9.3s remaining
+[20:53:20 +  126.6s]       [realisr 2/2] realisr step  31/50    9.8s elapsed, ~  6.0s remaining
+[20:53:23 +  129.7s]       [realisr 2/2] realisr step  41/50   12.9s elapsed, ~  2.8s remaining
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 16.005s, max VRAM alloc 7909.099 MB
+[20:53:26 +  132.8s]     wavelet color fix + resize back
+[20:53:26 +  132.8s]     chroma locked to the colorized input (realisr had moved it by 1.4 on average)
+[20:53:26 +  132.9s]     realisr 2/2 done in 16.16 s -> 00002_gray_14-39-36_final.png
+
+[20:53:26 +  132.9s] === DONE: 2 final images in output/captures/2026-10-17_14-39-35_event5_size512_chromaConfidence_lockRealisrChroma (total 132.90 s) ===
+DONE  2026-10-17_14-39-35_event5_size512_chromaConfidence_lockRealisrChroma rc=0 at 2026-10-19 20:53:28
+[note] --control_type grayscale is ignored: this script runs grayscale colorization and then realisr on every frame
+[20:53:34 +    0.0s] === run start 2026-10-19 20:53:34 ===
+[20:53:34 +    0.0s] device cuda, mixed precision no, process size 512, seed None
+[20:53:34 +    0.0s] colorization ckpt: runs/pasd_light_color/checkpoint-180000
+[20:53:34 +    0.0s] realisr ckpt     : runs/pasd_light_color/checkpoint-180000
+[20:53:34 +    0.0s] TORCH_HOME=unset -> ~/.cache/torch  HF_HOME=unset -> ~/.cache/huggingface
+[20:53:34 +    0.2s] keyframe   : 00001_color_14-41-52.jpg
+[20:53:34 +    0.2s] grey frames: 00002_gray_14-41-54.jpg, 00003_gray_14-41-55.jpg, 00004_gray_14-41-56.jpg, 00005_color_14-41-57.jpg, 00006_gray_14-41-59.jpg
+[20:53:34 +    0.2s] output dir : output/captures/2026-10-17_14-41-52_event6_size512_chromaConfidence_lockRealisrChroma  (6 *_final.png expected)
+[20:53:34 +    0.2s] plan       : 5 colorize + 6 realisr = 11 diffusion runs
+[20:53:34 +    0.2s] loading caption model (blip) ...
+[20:53:42 +    7.7s] caption model loaded in 7.36 s
+
+[20:53:42 +    7.7s] === STAGE 1/2: colorization (5 frames) ===
+[20:53:42 +    7.7s] loading colorization pipeline ...
+[20:53:43 +    9.4s] colorization pipeline loaded in 1.67 s
+[20:53:43 +    9.4s] --- colorize 1/5: 00002_gray_14-41-54.jpg ---
+[20:53:43 +    9.4s]     chroma propagation on 640x480 grey frame
+[20:53:43 +    9.4s]     chroma done: luma residual 16.56, mean confidence 0.742
+[20:53:44 +    9.7s]     caption: "a clear photo of a person holding a cell phone"
+[20:53:44 +    9.7s]     colorizing at 680x512, 50 steps, cond scale 0.7
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[20:53:44 +   10.4s]       [colorize 1/5] colorize step   1/50    0.6s elapsed, ~ 31.6s remaining
+[20:53:47 +   13.5s]       [colorize 1/5] colorize step  11/50    3.8s elapsed, ~ 13.3s remaining
+[20:53:51 +   16.5s]       [colorize 1/5] colorize step  21/50    6.8s elapsed, ~  9.4s remaining
+[20:53:54 +   19.6s]       [colorize 1/5] colorize step  31/50    9.9s elapsed, ~  6.1s remaining
+[20:53:57 +   22.7s]       [colorize 1/5] colorize step  41/50   13.0s elapsed, ~  2.9s remaining
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 16.139s, max VRAM alloc 7909.099 MB
+[20:54:00 +   25.9s]     chroma propagated, confidence-weighted (mean w 0.74, 23.8% of pixels mostly model) (mean |model-propagated| = 8.0)
+[20:54:00 +   26.0s]     colorize 1/5 done in 16.51 s -> 00002_gray_14-41-54_color.png
+[20:54:00 +   26.0s] --- colorize 2/5: 00003_gray_14-41-55.jpg ---
+[20:54:00 +   26.0s]     chroma propagation on 640x480 grey frame
+[20:54:00 +   26.0s]     chroma done: luma residual 23.17, mean confidence 0.620
+[20:54:00 +   26.1s]     caption: "a person is pressing buttons on a wall"
+[20:54:00 +   26.1s]     colorizing at 680x512, 50 steps, cond scale 0.7
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[20:54:01 +   26.6s]       [colorize 2/5] colorize step   1/50    0.5s elapsed, ~ 25.2s remaining
+[20:54:04 +   29.7s]       [colorize 2/5] colorize step  11/50    3.6s elapsed, ~ 12.8s remaining
+[20:54:07 +   32.8s]       [colorize 2/5] colorize step  21/50    6.7s elapsed, ~  9.3s remaining
+[20:54:10 +   35.9s]       [colorize 2/5] colorize step  31/50    9.8s elapsed, ~  6.0s remaining
+[20:54:13 +   39.0s]       [colorize 2/5] colorize step  41/50   12.9s elapsed, ~  2.8s remaining
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 16.020s, max VRAM alloc 7909.099 MB
+[20:54:16 +   42.2s]     chroma propagated, confidence-weighted (mean w 0.62, 35.4% of pixels mostly model) (mean |model-propagated| = 16.4)
+[20:54:16 +   42.3s]     colorize 2/5 done in 16.19 s -> 00003_gray_14-41-55_color.png
+[20:54:16 +   42.3s] --- colorize 3/5: 00004_gray_14-41-56.jpg ---
+[20:54:16 +   42.3s]     chroma propagation on 640x480 grey frame
+[20:54:16 +   42.3s]     chroma done: luma residual 22.62, mean confidence 0.633
+[20:54:16 +   42.5s]     caption: "a person opening a door on a bus"
+[20:54:16 +   42.5s]     colorizing at 680x512, 50 steps, cond scale 0.7
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[20:54:17 +   43.0s]       [colorize 3/5] colorize step   1/50    0.5s elapsed, ~ 26.7s remaining
+[20:54:20 +   46.1s]       [colorize 3/5] colorize step  11/50    3.6s elapsed, ~ 12.9s remaining
+[20:54:23 +   49.2s]       [colorize 3/5] colorize step  21/50    6.8s elapsed, ~  9.3s remaining
+[20:54:26 +   52.4s]       [colorize 3/5] colorize step  31/50    9.9s elapsed, ~  6.0s remaining
+[20:54:29 +   55.5s]       [colorize 3/5] colorize step  41/50   13.0s elapsed, ~  2.8s remaining
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 16.082s, max VRAM alloc 7909.099 MB
+[20:54:33 +   58.6s]     chroma propagated, confidence-weighted (mean w 0.63, 33.9% of pixels mostly model) (mean |model-propagated| = 15.2)
+[20:54:33 +   58.7s]     colorize 3/5 done in 16.32 s -> 00004_gray_14-41-56_color.png
+[20:54:33 +   58.7s] --- colorize 4/5: 00005_color_14-41-57.jpg ---
+[20:54:33 +   58.7s]     chroma propagation on 640x480 grey frame
+[20:54:33 +   58.8s]     chroma done: luma residual 20.61, mean confidence 0.659
+[20:54:33 +   58.9s]     caption: "a person holding a remote control in their hand"
+[20:54:33 +   58.9s]     colorizing at 680x512, 50 steps, cond scale 0.7
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[20:54:33 +   59.5s]       [colorize 4/5] colorize step   1/50    0.5s elapsed, ~ 26.6s remaining
+[20:54:37 +   62.6s]       [colorize 4/5] colorize step  11/50    3.7s elapsed, ~ 12.9s remaining
+[20:54:40 +   65.7s]       [colorize 4/5] colorize step  21/50    6.8s elapsed, ~  9.3s remaining
+[20:54:43 +   68.8s]       [colorize 4/5] colorize step  31/50    9.9s elapsed, ~  6.0s remaining
+[20:54:46 +   71.9s]       [colorize 4/5] colorize step  41/50   13.0s elapsed, ~  2.8s remaining
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 16.069s, max VRAM alloc 7909.099 MB
+[20:54:49 +   75.0s]     chroma propagated, confidence-weighted (mean w 0.66, 31.3% of pixels mostly model) (mean |model-propagated| = 17.8)
+[20:54:49 +   75.1s]     colorize 4/5 done in 16.30 s -> 00005_color_14-41-57_color.png
+[20:54:49 +   75.1s] --- colorize 5/5: 00006_gray_14-41-59.jpg ---
+[20:54:49 +   75.1s]     chroma propagation on 640x480 grey frame
+[20:54:49 +   75.2s]     chroma done: luma residual 19.05, mean confidence 0.698
+[20:54:49 +   75.3s]     caption: "a clear image of a person using a cell phone"
+[20:54:49 +   75.3s]     colorizing at 680x512, 50 steps, cond scale 0.7
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[20:54:50 +   75.9s]       [colorize 5/5] colorize step   1/50    0.5s elapsed, ~ 25.4s remaining
+[20:54:53 +   79.0s]       [colorize 5/5] colorize step  11/50    3.6s elapsed, ~ 12.9s remaining
+[20:54:56 +   82.1s]       [colorize 5/5] colorize step  21/50    6.7s elapsed, ~  9.3s remaining
+[20:54:59 +   85.2s]       [colorize 5/5] colorize step  31/50    9.8s elapsed, ~  6.0s remaining
+[20:55:02 +   88.3s]       [colorize 5/5] colorize step  41/50   13.0s elapsed, ~  2.8s remaining
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 16.059s, max VRAM alloc 7909.099 MB
+[20:55:05 +   91.4s]     chroma propagated, confidence-weighted (mean w 0.70, 26.3% of pixels mostly model) (mean |model-propagated| = 14.5)
+[20:55:05 +   91.5s]     colorize 5/5 done in 16.27 s -> 00006_gray_14-41-59_color.png
+
+[20:55:05 +   91.5s] === STAGE 2/2: realisr (6 frames) ===
+[20:55:05 +   91.5s] reusing the loaded pipeline (same checkpoint, scheduler swapped)
+[20:55:05 +   91.5s] --- realisr 1/6: 00001_color_14-41-52_key ---
+[20:55:06 +   91.7s]     caption: "a person holding a cell phone in their handclean, high-resolution, 8k"
+[20:55:06 +   91.7s]     realisr at 680x512 (from 640x480, upscale 1), 50 steps, cond scale 1.0
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[20:55:06 +   92.2s]       [realisr 1/6] realisr step   1/50    0.5s elapsed, ~ 25.2s remaining
+[20:55:09 +   95.3s]       [realisr 1/6] realisr step  11/50    3.6s elapsed, ~ 12.8s remaining
+[20:55:12 +   98.4s]       [realisr 1/6] realisr step  21/50    6.7s elapsed, ~  9.3s remaining
+[20:55:15 +  101.5s]       [realisr 1/6] realisr step  31/50    9.8s elapsed, ~  6.0s remaining
+[20:55:19 +  104.6s]       [realisr 1/6] realisr step  41/50   13.0s elapsed, ~  2.8s remaining
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 16.039s, max VRAM alloc 7909.099 MB
+[20:55:22 +  107.7s]     wavelet color fix + resize back
+[20:55:22 +  107.7s]     chroma locked to the colorized input (realisr had moved it by 3.6 on average)
+[20:55:22 +  107.8s]     realisr 1/6 done in 16.20 s -> 00001_color_14-41-52_key_final.png
+[20:55:22 +  107.8s] --- realisr 2/6: 00002_gray_14-41-54 ---
+[20:55:22 +  108.0s]     caption: "a clear photo of a person holding a remote controlclean, high-resolution, 8k"
+[20:55:22 +  108.0s]     realisr at 680x512 (from 640x480, upscale 1), 50 steps, cond scale 1.0
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[20:55:22 +  108.5s]       [realisr 2/6] realisr step   1/50    0.5s elapsed, ~ 25.9s remaining
+[20:55:26 +  111.6s]       [realisr 2/6] realisr step  11/50    3.6s elapsed, ~ 12.9s remaining
+[20:55:29 +  114.7s]       [realisr 2/6] realisr step  21/50    6.7s elapsed, ~  9.3s remaining
+[20:55:32 +  117.8s]       [realisr 2/6] realisr step  31/50    9.9s elapsed, ~  6.0s remaining
+[20:55:35 +  120.9s]       [realisr 2/6] realisr step  41/50   13.0s elapsed, ~  2.8s remaining
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 16.066s, max VRAM alloc 7909.099 MB
+[20:55:38 +  124.0s]     wavelet color fix + resize back
+[20:55:38 +  124.1s]     chroma locked to the colorized input (realisr had moved it by 3.1 on average)
+[20:55:38 +  124.2s]     realisr 2/6 done in 16.23 s -> 00002_gray_14-41-54_final.png
+[20:55:38 +  124.2s] --- realisr 3/6: 00003_gray_14-41-55 ---
+[20:55:38 +  124.3s]     caption: "a person is putting something on a wallclean, high-resolution, 8k"
+[20:55:38 +  124.3s]     realisr at 680x512 (from 640x480, upscale 1), 50 steps, cond scale 1.0
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[20:55:39 +  124.9s]       [realisr 3/6] realisr step   1/50    0.5s elapsed, ~ 25.8s remaining
+[20:55:42 +  128.0s]       [realisr 3/6] realisr step  11/50    3.6s elapsed, ~ 12.9s remaining
+[20:55:45 +  131.1s]       [realisr 3/6] realisr step  21/50    6.7s elapsed, ~  9.3s remaining
+[20:55:48 +  134.2s]       [realisr 3/6] realisr step  31/50    9.8s elapsed, ~  6.0s remaining
+[20:55:51 +  137.3s]       [realisr 3/6] realisr step  41/50   12.9s elapsed, ~  2.8s remaining
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 16.023s, max VRAM alloc 7909.099 MB
+[20:55:54 +  140.4s]     wavelet color fix + resize back
+[20:55:54 +  140.4s]     chroma locked to the colorized input (realisr had moved it by 3.1 on average)
+[20:55:55 +  140.6s]     realisr 3/6 done in 16.18 s -> 00003_gray_14-41-55_final.png
+[20:55:55 +  140.6s] --- realisr 4/6: 00004_gray_14-41-56 ---
+[20:55:55 +  140.9s]     caption: "a person holding a piece of paper in front of a machineclean, high-resolution, 8k"
+[20:55:55 +  140.9s]     realisr at 680x512 (from 640x480, upscale 1), 50 steps, cond scale 1.0
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[20:55:55 +  141.4s]       [realisr 4/6] realisr step   1/50    0.5s elapsed, ~ 25.8s remaining
+[20:55:58 +  144.5s]       [realisr 4/6] realisr step  11/50    3.6s elapsed, ~ 12.9s remaining
+[20:56:02 +  147.6s]       [realisr 4/6] realisr step  21/50    6.7s elapsed, ~  9.3s remaining
+[20:56:05 +  150.7s]       [realisr 4/6] realisr step  31/50    9.8s elapsed, ~  6.0s remaining
+[20:56:08 +  153.8s]       [realisr 4/6] realisr step  41/50   12.9s elapsed, ~  2.8s remaining
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 16.043s, max VRAM alloc 7909.099 MB
+[20:56:11 +  156.9s]     wavelet color fix + resize back
+[20:56:11 +  157.0s]     chroma locked to the colorized input (realisr had moved it by 3.0 on average)
+[20:56:11 +  157.2s]     realisr 4/6 done in 16.45 s -> 00004_gray_14-41-56_final.png
+[20:56:11 +  157.2s] --- realisr 5/6: 00005_color_14-41-57 ---
+[20:56:11 +  157.3s]     caption: "a person reaching for something on a wallclean, high-resolution, 8k"
+[20:56:11 +  157.3s]     realisr at 680x512 (from 640x480, upscale 1), 50 steps, cond scale 1.0
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[20:56:12 +  157.8s]       [realisr 5/6] realisr step   1/50    0.5s elapsed, ~ 25.7s remaining
+[20:56:15 +  160.9s]       [realisr 5/6] realisr step  11/50    3.6s elapsed, ~ 12.9s remaining
+[20:56:18 +  164.0s]       [realisr 5/6] realisr step  21/50    6.7s elapsed, ~  9.3s remaining
+[20:56:21 +  167.1s]       [realisr 5/6] realisr step  31/50    9.8s elapsed, ~  6.0s remaining
+[20:56:24 +  170.2s]       [realisr 5/6] realisr step  41/50   12.9s elapsed, ~  2.8s remaining
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 16.011s, max VRAM alloc 7909.099 MB
+[20:56:27 +  173.3s]     wavelet color fix + resize back
+[20:56:27 +  173.3s]     chroma locked to the colorized input (realisr had moved it by 4.7 on average)
+[20:56:27 +  173.5s]     realisr 5/6 done in 16.15 s -> 00005_color_14-41-57_final.png
+[20:56:27 +  173.5s] --- realisr 6/6: 00006_gray_14-41-59 ---
+[20:56:28 +  173.6s]     caption: "a man working on a machine in a factoryclean, high-resolution, 8k"
+[20:56:28 +  173.6s]     realisr at 680x512 (from 640x480, upscale 1), 50 steps, cond scale 1.0
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[20:56:28 +  174.1s]       [realisr 6/6] realisr step   1/50    0.5s elapsed, ~ 25.7s remaining
+[20:56:31 +  177.2s]       [realisr 6/6] realisr step  11/50    3.6s elapsed, ~ 12.8s remaining
+[20:56:34 +  180.3s]       [realisr 6/6] realisr step  21/50    6.7s elapsed, ~  9.3s remaining
+[20:56:37 +  183.4s]       [realisr 6/6] realisr step  31/50    9.8s elapsed, ~  6.0s remaining
+[20:56:40 +  186.5s]       [realisr 6/6] realisr step  41/50   12.9s elapsed, ~  2.8s remaining
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 15.994s, max VRAM alloc 7909.099 MB
+[20:56:44 +  189.6s]     wavelet color fix + resize back
+[20:56:44 +  189.6s]     chroma locked to the colorized input (realisr had moved it by 2.5 on average)
+[20:56:44 +  189.8s]     realisr 6/6 done in 16.15 s -> 00006_gray_14-41-59_final.png
+
+[20:56:44 +  189.8s] === DONE: 6 final images in output/captures/2026-10-17_14-41-52_event6_size512_chromaConfidence_lockRealisrChroma (total 189.79 s) ===
+DONE  2026-10-17_14-41-52_event6_size512_chromaConfidence_lockRealisrChroma rc=0 at 2026-10-19 20:56:45
+[note] --control_type grayscale is ignored: this script runs grayscale colorization and then realisr on every frame
+[20:56:51 +    0.0s] === run start 2026-10-19 20:56:51 ===
+[20:56:51 +    0.0s] device cuda, mixed precision no, process size 512, seed None
+[20:56:51 +    0.0s] colorization ckpt: runs/pasd_light_color/checkpoint-180000
+[20:56:51 +    0.0s] realisr ckpt     : runs/pasd_light_color/checkpoint-180000
+[20:56:51 +    0.0s] TORCH_HOME=unset -> ~/.cache/torch  HF_HOME=unset -> ~/.cache/huggingface
+[20:56:51 +    0.1s] keyframe   : 00001_color_14-46-21.jpg
+[20:56:51 +    0.1s] grey frames: 00002_gray_14-46-22.jpg
+[20:56:51 +    0.1s] output dir : output/captures/2026-10-17_14-46-21_event7_size512_chromaConfidence_lockRealisrChroma  (2 *_final.png expected)
+[20:56:51 +    0.1s] plan       : 1 colorize + 2 realisr = 3 diffusion runs
+[20:56:51 +    0.1s] loading caption model (blip) ...
+[20:56:58 +    7.2s] caption model loaded in 6.95 s
+
+[20:56:58 +    7.2s] === STAGE 1/2: colorization (1 frames) ===
+[20:56:58 +    7.2s] loading colorization pipeline ...
+[20:57:00 +    8.7s] colorization pipeline loaded in 1.56 s
+[20:57:00 +    8.7s] --- colorize 1/1: 00002_gray_14-46-22.jpg ---
+[20:57:00 +    8.7s]     chroma propagation on 640x480 grey frame
+[20:57:00 +    8.8s]     chroma done: luma residual 5.63, mean confidence 0.944
+[20:57:00 +    9.0s]     caption: "a person holding a remote control in their hand"
+[20:57:00 +    9.0s]     colorizing at 680x512, 50 steps, cond scale 0.7
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[20:57:00 +    9.7s]       [colorize 1/1] colorize step   1/50    0.6s elapsed, ~ 29.6s remaining
+[20:57:04 +   12.8s]       [colorize 1/1] colorize step  11/50    3.7s elapsed, ~ 13.1s remaining
+[20:57:07 +   15.8s]       [colorize 1/1] colorize step  21/50    6.8s elapsed, ~  9.4s remaining
+[20:57:10 +   18.9s]       [colorize 1/1] colorize step  31/50    9.9s elapsed, ~  6.1s remaining
+[20:57:13 +   22.0s]       [colorize 1/1] colorize step  41/50   13.0s elapsed, ~  2.8s remaining
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 16.071s, max VRAM alloc 7909.099 MB
+[20:57:16 +   25.1s]     chroma propagated, confidence-weighted (mean w 0.94, 4.8% of pixels mostly model) (mean |model-propagated| = 8.8)
+[20:57:16 +   25.2s]     colorize 1/1 done in 16.41 s -> 00002_gray_14-46-22_color.png
+
+[20:57:16 +   25.2s] === STAGE 2/2: realisr (2 frames) ===
+[20:57:16 +   25.2s] reusing the loaded pipeline (same checkpoint, scheduler swapped)
+[20:57:16 +   25.2s] --- realisr 1/2: 00001_color_14-46-21_key ---
+[20:57:16 +   25.3s]     caption: "a person using a cell phone on a wallclean, high-resolution, 8k"
+[20:57:16 +   25.3s]     realisr at 680x512 (from 640x480, upscale 1), 50 steps, cond scale 1.0
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[20:57:17 +   25.9s]       [realisr 1/2] realisr step   1/50    0.5s elapsed, ~ 25.1s remaining
+[20:57:20 +   28.9s]       [realisr 1/2] realisr step  11/50    3.6s elapsed, ~ 12.8s remaining
+[20:57:23 +   32.0s]       [realisr 1/2] realisr step  21/50    6.7s elapsed, ~  9.2s remaining
+[20:57:26 +   35.1s]       [realisr 1/2] realisr step  31/50    9.8s elapsed, ~  6.0s remaining
+[20:57:29 +   38.2s]       [realisr 1/2] realisr step  41/50   12.9s elapsed, ~  2.8s remaining
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 15.981s, max VRAM alloc 7909.099 MB
+[20:57:32 +   41.3s]     wavelet color fix + resize back
+[20:57:32 +   41.4s]     chroma locked to the colorized input (realisr had moved it by 4.3 on average)
+[20:57:32 +   41.5s]     realisr 1/2 done in 16.14 s -> 00001_color_14-46-21_key_final.png
+[20:57:32 +   41.5s] --- realisr 2/2: 00002_gray_14-46-22 ---
+[20:57:32 +   41.6s]     caption: "a person holding a remote control in their handclean, high-resolution, 8k"
+[20:57:32 +   41.6s]     realisr at 680x512 (from 640x480, upscale 1), 50 steps, cond scale 1.0
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[20:57:33 +   42.1s]       [realisr 2/2] realisr step   1/50    0.5s elapsed, ~ 25.6s remaining
+[20:57:36 +   45.2s]       [realisr 2/2] realisr step  11/50    3.6s elapsed, ~ 12.8s remaining
+[20:57:39 +   48.3s]       [realisr 2/2] realisr step  21/50    6.7s elapsed, ~  9.3s remaining
+[20:57:42 +   51.4s]       [realisr 2/2] realisr step  31/50    9.8s elapsed, ~  6.0s remaining
+[20:57:45 +   54.5s]       [realisr 2/2] realisr step  41/50   12.9s elapsed, ~  2.8s remaining
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 15.991s, max VRAM alloc 7909.099 MB
+[20:57:48 +   57.6s]     wavelet color fix + resize back
+[20:57:48 +   57.6s]     chroma locked to the colorized input (realisr had moved it by 2.6 on average)
+[20:57:49 +   57.7s]     realisr 2/2 done in 16.14 s -> 00002_gray_14-46-22_final.png
+
+[20:57:49 +   57.7s] === DONE: 2 final images in output/captures/2026-10-17_14-46-21_event7_size512_chromaConfidence_lockRealisrChroma (total 57.71 s) ===
+DONE  2026-10-17_14-46-21_event7_size512_chromaConfidence_lockRealisrChroma rc=0 at 2026-10-19 20:57:49

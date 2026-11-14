@@ -1,0 +1,69 @@
+
+[time] accelerator init: 0.03 s
+[time] model loading: 126.37 s
+a close up of a strawberry on a white background
+
+[time] caption+preprocessing: 18.53 s
+[Tiled VAE]: input_size: torch.Size([1, 3, 4096, 4096]), tile_size: 1024, padding: 32
+[Tiled VAE]: split to 4x4 = 16 tiles. Optimal tile size 1024x1024, original tile size 1024x1024
+[Tiled VAE]: Done in 35.855s, max VRAM alloc 9494.463 MB
+[Tiled VAE]: input_size: torch.Size([1, 4, 512, 512]), tile_size: 224, padding: 11
+[Tiled VAE]: split to 3x3 = 9 tiles. Optimal tile size 192x192, original tile size 224x224
+[Tiled VAE]: Done in 67.500s, max VRAM alloc 19849.976 MB
+[Tiled VAE]: Done in 15999.981s, max VRAM alloc 8966.791 MB
+[time] Strawberry19.jpg: 15999.98 s (4096x4096, 50 steps, cfg=9.0)
+saved output/timestamp/Strawberry19_Strawberry19_size4096_rep1.png
+
+[time] Image Cvt: 0.14 s
+
+[time] TOTAL RUN: 16145.16 s
+DONE  Strawberry19_size4096_rep1 rc=0 at 2026-08-01 05:12:20
+
+[time] accelerator init: 0.02 s
+[time] model loading: 9.42 s
+a close up of a strawberry on a white background
+
+[time] caption+preprocessing: 0.42 s
+[Tiled VAE]: input_size: torch.Size([1, 3, 4096, 4096]), tile_size: 1024, padding: 32
+[Tiled VAE]: split to 4x4 = 16 tiles. Optimal tile size 1024x1024, original tile size 1024x1024
+[Tiled VAE]: Done in 32.567s, max VRAM alloc 9494.463 MB
+[Tiled VAE]: input_size: torch.Size([1, 4, 512, 512]), tile_size: 224, padding: 11
+[Tiled VAE]: split to 3x3 = 9 tiles. Optimal tile size 192x192, original tile size 224x224
+[Tiled VAE]: Done in 64.283s, max VRAM alloc 19849.976 MB
+[Tiled VAE]: Done in 15991.577s, max VRAM alloc 8966.791 MB
+[time] Strawberry19.jpg: 15991.58 s (4096x4096, 50 steps, cfg=9.0)
+saved output/timestamp/Strawberry19_Strawberry19_size4096_rep2.png
+
+[time] Image Cvt: 0.10 s
+
+[time] TOTAL RUN: 16001.63 s
+DONE  Strawberry19_size4096_rep2 rc=0 at 2026-08-01 09:39:12
+
+[time] accelerator init: 0.02 s
+[time] model loading: 9.31 s
+a close up of a strawberry on a white background
+
+[time] caption+preprocessing: 0.41 s
+[Tiled VAE]: input_size: torch.Size([1, 3, 4096, 4096]), tile_size: 1024, padding: 32
+[Tiled VAE]: split to 4x4 = 16 tiles. Optimal tile size 1024x1024, original tile size 1024x1024
+[Tiled VAE]: Done in 32.729s, max VRAM alloc 9494.463 MB
+[Tiled VAE]: input_size: torch.Size([1, 4, 512, 512]), tile_size: 224, padding: 11
+[Tiled VAE]: split to 3x3 = 9 tiles. Optimal tile size 192x192, original tile size 224x224
+[Tiled VAE]: Done in 65.401s, max VRAM alloc 19849.976 MB
+[Tiled VAE]: Done in 15995.297s, max VRAM alloc 8966.791 MB
+[time] Strawberry19.jpg: 15995.30 s (4096x4096, 50 steps, cfg=9.0)
+saved output/timestamp/Strawberry19_Strawberry19_size4096_rep3.png
+
+[time] Image Cvt: 0.10 s
+
+[time] TOTAL RUN: 16005.23 s
+DONE  Strawberry19_size4096_rep3 rc=0 at 2026-08-01 14:06:09
+
+[time] accelerator init: 0.02 s
+[time] model loading: 9.17 s
+a close up of a strawberry on a white background
+
+[time] caption+preprocessing: 0.41 s
+[Tiled VAE]: input_size: torch.Size([1, 3, 4096, 4096]), tile_size: 1024, padding: 32
+[Tiled VAE]: split to 4x4 = 16 tiles. Optimal tile size 1024x1024, original tile size 1024x1024
+[Tiled VAE]: Done in 32.833s, max VRAM alloc 9494.463 MB

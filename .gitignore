@@ -1,21 +1,38 @@
-# --- AI/Machine Learning Specific ---
-checkpoints/
-datasets/
-debug_steps/
-runs/
-samples/
+# Whitelist: ignore everything at the top level, then allow only what should be pushed.
+/*
 
-# --- Local IDE & System Noise ---
-.vscode/
-.metadata/
-.jxbrowser.userdata/
-RemoteSystemsTempFiles/
-dvt/
+# --- Repo basics ---
+!/.gitignore
+!/README.md
+!/LICENSE
 
-# --- Python System Files ---
+# --- Python code ---
+!/*.py
+!/pasd/
+
+# --- Results ---
+!/examples/
+!/output/
+!/quality_report.html
+!/report_colorization.html
+
+# --- Project records ---
+!/meeting slides/
+!/eoFiles/
+!/Claude outputs/
+
+# --- Environment / cluster ---
+!/*.yml
+!/requirements*.txt
+!/parallel.pbs
+
+# --- Never push, even inside allowed folders ---
 __pycache__/
 *.py[cod]
-.venv/
-venv/"output/" 
-"output/" 
-output/
+*.bak
+*.log
+*.pth
+*.pt
+*.ckpt
+*.bin
+*.safetensors

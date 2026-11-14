@@ -1,0 +1,192 @@
+
+[time] accelerator init: 0.06 s
+[time] model loading: 42.95 s
+a close up of a strawberry on a white background
+
+[time] caption+preprocessing: 3.77 s
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 5.625s, max VRAM alloc 6571.022 MB
+[time] Strawberry19.jpg: 5.63 s (32x32, 50 steps, cfg=9.0)
+saved output/timestamp/Strawberry19_Strawberry19_size32_rep1.png
+
+[time] Image Cvt: 0.10 s
+
+[time] TOTAL RUN: 52.65 s
+DONE  Strawberry19_size32_rep1 rc=0 at 2026-08-14 22:18:56
+
+[time] accelerator init: 0.03 s
+[time] model loading: 10.80 s
+a close up of a strawberry on a white background
+
+[time] caption+preprocessing: 0.45 s
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 2.560s, max VRAM alloc 6571.022 MB
+[time] Strawberry19.jpg: 2.56 s (32x32, 50 steps, cfg=9.0)
+saved output/timestamp/Strawberry19_Strawberry19_size32_rep2.png
+
+[time] Image Cvt: 0.02 s
+
+[time] TOTAL RUN: 13.98 s
+DONE  Strawberry19_size32_rep2 rc=0 at 2026-08-14 22:19:19
+
+[time] accelerator init: 0.03 s
+[time] model loading: 7.94 s
+a close up of a strawberry on a white background
+
+[time] caption+preprocessing: 0.46 s
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 2.599s, max VRAM alloc 6571.022 MB
+[time] Strawberry19.jpg: 2.60 s (32x32, 50 steps, cfg=9.0)
+saved output/timestamp/Strawberry19_Strawberry19_size32_rep3.png
+
+[time] Image Cvt: 0.02 s
+
+[time] TOTAL RUN: 11.16 s
+DONE  Strawberry19_size32_rep3 rc=0 at 2026-08-14 22:19:36
+
+[time] accelerator init: 0.03 s
+[time] model loading: 7.32 s
+a close up of a strawberry on a white background
+
+[time] caption+preprocessing: 0.44 s
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 2.430s, max VRAM alloc 6571.022 MB
+[time] Strawberry19.jpg: 2.43 s (32x32, 50 steps, cfg=9.0)
+saved output/timestamp/Strawberry19_Strawberry19_size32_rep4.png
+
+[time] Image Cvt: 0.02 s
+
+[time] TOTAL RUN: 10.35 s
+DONE  Strawberry19_size32_rep4 rc=0 at 2026-08-14 22:19:53
+
+[time] accelerator init: 0.03 s
+[time] model loading: 7.11 s
+a close up of a strawberry on a white background
+
+[time] caption+preprocessing: 0.44 s
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 2.398s, max VRAM alloc 6571.022 MB
+[time] Strawberry19.jpg: 2.40 s (32x32, 50 steps, cfg=9.0)
+saved output/timestamp/Strawberry19_Strawberry19_size32_rep5.png
+
+[time] Image Cvt: 0.06 s
+
+[time] TOTAL RUN: 10.15 s
+DONE  Strawberry19_size32_rep5 rc=0 at 2026-08-14 22:20:08
+
+[time] accelerator init: 0.03 s
+[time] model loading: 7.81 s
+a close up of a strawberry on a white background
+
+[time] caption+preprocessing: 0.43 s
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 2.595s, max VRAM alloc 6571.022 MB
+[time] Strawberry19.jpg: 2.60 s (32x32, 50 steps, cfg=9.0)
+saved output/timestamp/Strawberry19_Strawberry19_size32_rep6.png
+
+[time] Image Cvt: 0.02 s
+
+[time] TOTAL RUN: 11.00 s
+DONE  Strawberry19_size32_rep6 rc=0 at 2026-08-14 22:20:25
+
+[time] accelerator init: 0.03 s
+[time] model loading: 7.11 s
+a close up of a strawberry on a white background
+
+[time] caption+preprocessing: 0.46 s
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 110.666s, max VRAM alloc 10795.572 MB
+[time] Strawberry19.jpg: 110.67 s (1024x1024, 50 steps, cfg=9.0)
+saved output/timestamp/Strawberry19_Strawberry19_size1024_rep1.png
+
+[time] Image Cvt: 0.02 s
+
+[time] TOTAL RUN: 118.39 s
+DONE  Strawberry19_size1024_rep1 rc=0 at 2026-08-14 22:22:29
+
+[time] accelerator init: 0.03 s
+[time] model loading: 7.61 s
+a close up of a strawberry on a white background
+
+[time] caption+preprocessing: 0.46 s
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 110.571s, max VRAM alloc 10795.572 MB
+[time] Strawberry19.jpg: 110.57 s (1024x1024, 50 steps, cfg=9.0)
+saved output/timestamp/Strawberry19_Strawberry19_size1024_rep2.png
+
+[time] Image Cvt: 0.02 s
+
+[time] TOTAL RUN: 118.81 s
+DONE  Strawberry19_size1024_rep2 rc=0 at 2026-08-14 22:24:35
+
+[time] accelerator init: 0.06 s
+[time] model loading: 7.96 s
+a close up of a strawberry on a white background
+
+[time] caption+preprocessing: 0.45 s
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 110.464s, max VRAM alloc 10795.572 MB
+[time] Strawberry19.jpg: 110.46 s (1024x1024, 50 steps, cfg=9.0)
+saved output/timestamp/Strawberry19_Strawberry19_size1024_rep3.png
+
+[time] Image Cvt: 0.02 s
+
+[time] TOTAL RUN: 119.08 s
+DONE  Strawberry19_size1024_rep3 rc=0 at 2026-08-14 22:26:41
+
+[time] accelerator init: 0.03 s
+[time] model loading: 7.66 s
+a close up of a strawberry on a white background
+
+[time] caption+preprocessing: 0.45 s
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 110.471s, max VRAM alloc 10795.572 MB
+[time] Strawberry19.jpg: 110.47 s (1024x1024, 50 steps, cfg=9.0)
+saved output/timestamp/Strawberry19_Strawberry19_size1024_rep4.png
+
+[time] Image Cvt: 0.02 s
+
+[time] TOTAL RUN: 118.75 s
+DONE  Strawberry19_size1024_rep4 rc=0 at 2026-08-14 22:28:47
+
+[time] accelerator init: 0.03 s
+[time] model loading: 9.30 s
+a close up of a strawberry on a white background
+
+[time] caption+preprocessing: 0.45 s
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 110.503s, max VRAM alloc 10795.572 MB
+[time] Strawberry19.jpg: 110.50 s (1024x1024, 50 steps, cfg=9.0)
+saved output/timestamp/Strawberry19_Strawberry19_size1024_rep5.png
+
+[time] Image Cvt: 0.02 s
+
+[time] TOTAL RUN: 120.43 s
+DONE  Strawberry19_size1024_rep5 rc=0 at 2026-08-14 22:30:54
+
+[time] accelerator init: 0.03 s
+[time] model loading: 7.99 s
+a close up of a strawberry on a white background
+
+[time] caption+preprocessing: 0.45 s
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: the input size is tiny and unnecessary to tile.
+[Tiled VAE]: Done in 110.433s, max VRAM alloc 10795.572 MB
+[time] Strawberry19.jpg: 110.43 s (1024x1024, 50 steps, cfg=9.0)
+saved output/timestamp/Strawberry19_Strawberry19_size1024_rep6.png
+
+[time] Image Cvt: 0.02 s
+
+[time] TOTAL RUN: 119.04 s
+DONE  Strawberry19_size1024_rep6 rc=0 at 2026-08-14 22:33:00
